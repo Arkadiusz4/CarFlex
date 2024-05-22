@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarFlex", "CarFlex\CarFlex.csproj", "{F424E182-5860-44D5-AE8F-E3E06667844A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F424E182-5860-44D5-AE8F-E3E06667844A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F424E182-5860-44D5-AE8F-E3E06667844A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F424E182-5860-44D5-AE8F-E3E06667844A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F424E182-5860-44D5-AE8F-E3E06667844A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
