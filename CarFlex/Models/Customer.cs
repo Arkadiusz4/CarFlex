@@ -35,4 +35,7 @@ public class Customer
     [StringLength(20)]
     [Display(Name = "Driver's License Number")]
     public string DriversLicenseNumber { get; set; }
+
+    public ICollection<Rental> Rentals { get; set; }
+    public ICollection<Reservation> Reservations { get; set; }
 }

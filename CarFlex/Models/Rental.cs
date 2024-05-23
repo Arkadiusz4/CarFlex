@@ -27,4 +27,5 @@ public class Rental
 
     public Customer Customer { get; set; }
     public Car Car { get; set; }
+    public ICollection<Payment> Payments { get; set; }
 }

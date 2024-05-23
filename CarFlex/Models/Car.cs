@@ -31,4 +31,9 @@ public class Car
     [Required]
     [Display(Name = "Availability")]
     public bool Availability { get; set; }
+
+    public ICollection<CarLocation> CarLocations { get; set; }
+    public ICollection<Reservation> Reservations { get; set; }
+    public ICollection<Rental> Rentals { get; set; }
+    public ICollection<Maintenance> Maintenances { get; set; }
 }
