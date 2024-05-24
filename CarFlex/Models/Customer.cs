@@ -37,5 +37,4 @@ public class Customer
     public string DriversLicenseNumber { get; set; }
 
     public ICollection<Rental> Rentals { get; set; }
-    public ICollection<Reservation> Reservations { get; set; }
 }

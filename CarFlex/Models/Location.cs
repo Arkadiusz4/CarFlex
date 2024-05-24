@@ -26,6 +26,4 @@ public class Location
     [StringLength(10)]
     [Display(Name = "Zip Code")]
     public string PostalCode { get; set; }
-
-    public ICollection<CarLocation> CarLocations { get; set; }
 }

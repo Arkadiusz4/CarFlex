@@ -7,6 +7,10 @@ public class Car
     [Key] public int CarId { get; set; }
 
     [Required]
+    [Display(Name = "Localization")]
+    public int LocationID { get; set; }
+
+    [Required]
     [StringLength(50)]
     [Display(Name = "Make")]
     public string Make { get; set; }
@@ -32,8 +36,6 @@ public class Car
     [Display(Name = "Availability")]
     public bool Availability { get; set; }
 
-    public ICollection<CarLocation> CarLocations { get; set; }
-    public ICollection<Reservation> Reservations { get; set; }
     public ICollection<Rental> Rentals { get; set; }
-    public ICollection<Maintenance> Maintenances { get; set; }
+    public ICollection<Location> Locations { get; set; }
 }
