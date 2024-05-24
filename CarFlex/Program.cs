@@ -1,4 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<CarFlexDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("CarFlexDbContext") ?? throw new InvalidOperationException("Connection string 'CarFlexDbContext' not found.")));
+builder.Services.AddDbContext<CarFlexContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CarFlexContext") ?? throw new InvalidOperationException("Connection string 'CarFlexContext' not found.")));
 
 // Add services to the container.
 //testline
