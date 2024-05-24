@@ -1,4 +1,5 @@
 using CarFlex.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CarFlexDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CarFlexDbContext") ??
                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<CarFlexDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();
 
