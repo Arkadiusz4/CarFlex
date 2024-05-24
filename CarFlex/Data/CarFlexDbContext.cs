@@ -13,4 +13,10 @@ using CarFlex.Models;
         }
 
         public DbSet<CarFlex.Models.Car> Car { get; set; } = default!;
+
+public DbSet<CarFlex.Models.Customer> Customer { get; set; } = default!;
+
+public DbSet<CarFlex.Models.Location> Location { get; set; } = default!;
+
+public DbSet<CarFlex.Models.Rental> Rental { get; set; } = default!;
     }
