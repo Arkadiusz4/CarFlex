@@ -117,3 +117,9 @@ src/.vs/config/applicationhost.config
 
 # JetBrains Rider's auto generated files
 .idea/
+
+# Database files
+CarFlex/CarFlexDbContext-f68f63cc-2d34-4ad9-b12b-342a35920a0b.db
+CarFlex/CarFlexDbContext-f68f63cc-2d34-4ad9-b12b-342a35920a0b.db-shm
+CarFlex/CarFlexDbContext-f68f63cc-2d34-4ad9-b12b-342a35920a0b.db-wal
+
