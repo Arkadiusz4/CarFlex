@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using CarFlex.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarFlex.Controllers
 {
@@ -54,7 +49,8 @@ namespace CarFlex.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")] Car car)
+            [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")]
+            Car car)
         {
             if (ModelState.IsValid)
             {
@@ -89,7 +85,8 @@ namespace CarFlex.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
-            [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")] Car car)
+            [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")]
+            Car car)
         {
             if (id != car.CarId)
             {

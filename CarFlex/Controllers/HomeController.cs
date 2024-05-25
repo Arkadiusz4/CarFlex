@@ -1,6 +1,6 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using CarFlex.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarFlex.Controllers;
 
