@@ -1,6 +1,6 @@
+@using System.Globalization
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor
-@model IEnumerable<CarFlex.Models.Car>
+@model IEnumerable<Car>
 
 @{
     ViewData["Title"] = "Index";
@@ -60,7 +60,7 @@
                 @Html.DisplayFor(modelItem => item.RegistrationNo)
             </td>
             <td>
-                @(item.RentalPricePerDay.ToString("C2", new System.Globalization.CultureInfo("pl-PL")))
+                @(item.RentalPricePerDay.ToString("C2", new CultureInfo("pl-PL")))
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Availability)
