@@ -18,7 +18,7 @@ namespace CarFlex
             _userManager = userManager;
             _signInManager = signInManager;
         }
-        
+
         [HttpGet]
         public IActionResult Login() => View();
 
@@ -28,7 +28,8 @@ namespace CarFlex
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe,
+                    lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");
@@ -89,12 +90,26 @@ namespace CarFlex
             {
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+
+                var customer = new Customer
+                {
+                    FirstName = user.Username,
+                    LastName = "",
+                    Email = user.Username,
+                    PhoneNumber = "",
+                    Address = "",
+                    DriversLicenseNumber = ""
+                };
+
+                _context.Add(customer);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(user);
         }
-
+        
         // GET: Account/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
