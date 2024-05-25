@@ -1,6 +1,7 @@
 using CarFlex.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CarFlex.Controllers
 {
@@ -40,6 +41,20 @@ namespace CarFlex.Controllers
         // GET: Rentals/Create
         public IActionResult Create()
         {
+            var cars = _context.Car.Select(c => new 
+            {
+                CarId = c.CarId,
+                Display = c.CarId + " - " + c.Make + " " + c.Model
+            }).ToList();
+            ViewData["CarId"] = new SelectList(cars, "CarId", "Display");
+            
+            var customers = _context.Customer.Select(c => new 
+            {
+                CustomerId = c.CustomerId,
+                Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
+            }).ToList();
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "Display");
+
             return View();
         }
 
@@ -56,6 +71,20 @@ namespace CarFlex.Controllers
                 if (car == null)
                 {
                     ModelState.AddModelError("CarId", "Invalid Car ID.");
+                    var cars = _context.Car.Select(c => new 
+                    {
+                        CarId = c.CarId,
+                        Display = c.CarId + " - " + c.Make + " " + c.Model
+                    }).ToList();
+                    ViewData["CarId"] = new SelectList(cars, "CarId", "Display", rental.CarId);
+                    
+                    var customers = _context.Customer.Select(c => new 
+                    {
+                        CustomerId = c.CustomerId,
+                        Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
+                    }).ToList();
+                    ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "Display", rental.CustomerId);
+
                     return View(rental);
                 }
 
@@ -66,6 +95,20 @@ namespace CarFlex.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            var carsList = _context.Car.Select(c => new 
+            {
+                CarId = c.CarId,
+                Display = c.CarId + " - " + c.Make + " " + c.Model
+            }).ToList();
+            ViewData["CarId"] = new SelectList(carsList, "CarId", "Display", rental.CarId);
+            
+            var customersList = _context.Customer.Select(c => new 
+            {
+                CustomerId = c.CustomerId,
+                Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
+            }).ToList();
+            ViewData["CustomerId"] = new SelectList(customersList, "CustomerId", "Display", rental.CustomerId);
+
             return View(rental);
         }
 
@@ -82,6 +125,20 @@ namespace CarFlex.Controllers
             {
                 return NotFound();
             }
+            var cars = _context.Car.Select(c => new 
+            {
+                CarId = c.CarId,
+                Display = c.CarId + " - " + c.Make + " " + c.Model
+            }).ToList();
+            ViewData["CarId"] = new SelectList(cars, "CarId", "Display", rental.CarId);
+            
+            var customers = _context.Customer.Select(c => new 
+            {
+                CustomerId = c.CustomerId,
+                Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
+            }).ToList();
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "Display", rental.CustomerId);
+
             return View(rental);
         }
 
@@ -106,6 +163,20 @@ namespace CarFlex.Controllers
                     if (car == null)
                     {
                         ModelState.AddModelError("CarId", "Invalid Car ID.");
+                        var cars = _context.Car.Select(c => new 
+                        {
+                            CarId = c.CarId,
+                            Display = c.CarId + " - " + c.Make + " " + c.Model
+                        }).ToList();
+                        ViewData["CarId"] = new SelectList(cars, "CarId", "Display", rental.CarId);
+                        
+                        var customers = _context.Customer.Select(c => new 
+                        {
+                            CustomerId = c.CustomerId,
+                            Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
+                        }).ToList();
+                        ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "Display", rental.CustomerId);
+
                         return View(rental);
                     }
 
@@ -128,6 +199,20 @@ namespace CarFlex.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            var carsList = _context.Car.Select(c => new 
+            {
+                CarId = c.CarId,
+                Display = c.CarId + " - " + c.Make + " " + c.Model
+            }).ToList();
+            ViewData["CarId"] = new SelectList(carsList, "CarId", "Display", rental.CarId);
+            
+            var customersList = _context.Customer.Select(c => new 
+            {
+                CustomerId = c.CustomerId,
+                Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
+            }).ToList();
+            ViewData["CustomerId"] = new SelectList(customersList, "CustomerId", "Display", rental.CustomerId);
+
             return View(rental);
         }
 
