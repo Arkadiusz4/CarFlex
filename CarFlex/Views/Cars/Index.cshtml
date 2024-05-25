@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor
 @model IEnumerable<CarFlex.Models.Car>
 
 @{
@@ -10,74 +11,80 @@
 <p>
     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
     {
-        <a asp-action="Create">Create New</a>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
     }
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.LocationID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Make)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RegistrationNo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RentalPricePerDay)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Availability)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LocationID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Make)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Model)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Year)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RegistrationNo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RentalPricePerDay)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Availability)
+        </th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LocationID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Make)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Model)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Year)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RegistrationNo)
-                </td>
-                <td>
-                    @(item.RentalPricePerDay.ToString("C2", new System.Globalization.CultureInfo("pl-PL")))
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Availability)
-                </td>
-                <td>
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Make)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Model)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistrationNo)
+            </td>
+            <td>
+                @(item.RentalPricePerDay.ToString("C2", new System.Globalization.CultureInfo("pl-PL")))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Availability)
+            </td>
+            <td>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-danger">Delete</a>
+                }
+                @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                {
+                    @if (item.Availability)
                     {
-                        <a asp-action="Edit" asp-route-id="@item.CarId">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.CarId">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.CarId">Delete</a>
+                        <a asp-action="Rent" asp-route-id="@item.CarId" class="btn btn-primary">Rent</a>
                     }
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                    else
                     {
-                        <a asp-action="Rent" asp-route-id="@item.CarId">Rent</a>
+                        <a class="btn btn-secondary disabled" disabled>Rent</a>
                     }
-                </td>
-            </tr>
-        }
+                }
+            </td>
+        </tr>
+    }
     </tbody>
 </table>
