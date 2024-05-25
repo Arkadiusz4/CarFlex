@@ -1,6 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor
-@model IEnumerable<CarFlex.Models.Customer>
+@model IEnumerable<Customer>
 
 @{
     ViewData["Title"] = "Index";
@@ -11,7 +10,7 @@
 <p>
     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
     {
-        <a asp-action="Create">Create New</a>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
     }
 </p>
 <table class="table">
@@ -63,9 +62,9 @@
             <td>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
-                    <a asp-action="Edit" asp-route-id="@item.CustomerId">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.CustomerId"> Details </a>
-                    <a asp-action="Delete" asp-route-id="@item.CustomerId"> Delete </a>
+                    <a asp-action="Edit" asp-route-id="@item.CustomerId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.CustomerId" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.CustomerId" class="btn btn-danger">Delete</a>
                 }
             </td>
         </tr>
