@@ -53,7 +53,8 @@ namespace CarFlex.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")] Car car)
+        public async Task<IActionResult> Create(
+            [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")] Car car)
         {
             if (ModelState.IsValid)
             {
@@ -61,6 +62,7 @@ namespace CarFlex.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(car);
         }
 
@@ -77,6 +79,7 @@ namespace CarFlex.Controllers
             {
                 return NotFound();
             }
+
             return View(car);
         }
 
@@ -85,7 +88,8 @@ namespace CarFlex.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")] Car car)
+        public async Task<IActionResult> Edit(int id,
+            [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")] Car car)
         {
             if (id != car.CarId)
             {
@@ -110,8 +114,10 @@ namespace CarFlex.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(car);
         }
 
@@ -151,6 +157,42 @@ namespace CarFlex.Controllers
         private bool CarExists(int id)
         {
             return _context.Car.Any(e => e.CarId == id);
+        }
+
+        // GET: Cars/Rent/5
+        public async Task<IActionResult> Rent(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var car = await _context.Car.FirstOrDefaultAsync(m => m.CarId == id);
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            car.Availability = false;
+
+            try
+            {
+                _context.Update(car);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CarExists(car.CarId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
