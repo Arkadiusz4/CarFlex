@@ -5,7 +5,8 @@ namespace CarFlex.Data
 {
     public static class DbInitializer
     {
-        public static async Task Initialize(CarFlexDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task Initialize(CarFlexDbContext context, UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             context.Database.EnsureCreated();
 
@@ -22,10 +23,26 @@ namespace CarFlex.Data
 
             var cars = new Car[]
             {
-                new Car { Make = "Toyota", Model = "Corolla", Year = 2020, RegistrationNo = "ABC123", RentalPricePerDay = 50, Availability = true },
-                new Car { Make = "Honda", Model = "Civic", Year = 2019, RegistrationNo = "DEF456", RentalPricePerDay = 45, Availability = true },
-                new Car { Make = "Opel", Model = "Astra", Year = 2023, RegistrationNo = "ABC124", RentalPricePerDay = 60, Availability = true },
-                new Car { Make = "BMW", Model = "M4", Year = 2024, RegistrationNo = "HWDP", RentalPricePerDay = 2000, Availability = true },
+                new Car
+                {
+                    Make = "Toyota", Model = "Corolla", Year = 2020, RegistrationNo = "ABC123", RentalPricePerDay = 50,
+                    Availability = true
+                },
+                new Car
+                {
+                    Make = "Honda", Model = "Civic", Year = 2019, RegistrationNo = "DEF456", RentalPricePerDay = 45,
+                    Availability = true
+                },
+                new Car
+                {
+                    Make = "Opel", Model = "Astra", Year = 2023, RegistrationNo = "ABC124", RentalPricePerDay = 60,
+                    Availability = true
+                },
+                new Car
+                {
+                    Make = "BMW", Model = "M4", Year = 2024, RegistrationNo = "HWDP", RentalPricePerDay = 2000,
+                    Availability = true
+                },
             };
 
             foreach (var car in cars)
@@ -38,8 +55,16 @@ namespace CarFlex.Data
 
             var customers = new Customer[]
             {
-                new Customer { FirstName = "John", LastName = "Doe", Email = "john.doe@example.com", PhoneNumber = "123456789", Address = "123 Main St", DriversLicenseNumber = "D1234567" },
-                new Customer { FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com", PhoneNumber = "987654321", Address = "456 Elm St", DriversLicenseNumber = "D7654321" }
+                new Customer
+                {
+                    FirstName = "John", LastName = "Doe", Email = "john.doe@example.com", PhoneNumber = "123456789",
+                    Address = "123 Main St", DriversLicenseNumber = "D1234567"
+                },
+                new Customer
+                {
+                    FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com", PhoneNumber = "987654321",
+                    Address = "456 Elm St", DriversLicenseNumber = "D7654321"
+                }
             };
 
             foreach (var customer in customers)
@@ -62,20 +87,41 @@ namespace CarFlex.Data
 
             context.SaveChanges();
 
-            // Seed admin role and user
-            if (!await roleManager.RoleExistsAsync("Admin"))
+            // Create roles
+            string[] roles = new string[] { "Admin", "User" };
+            foreach (var role in roles)
             {
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
             }
 
-            if (userManager.Users.All(u => u.UserName != "admin"))
+            // Create admin user
+            var adminEmail = "admin@admin.com";
+            var adminPassword = "Admin@123";
+            if (userManager.FindByEmailAsync(adminEmail).Result == null)
             {
-                var adminUser = new IdentityUser { UserName = "admin", Email = "admin@example.com" };
-                var result = await userManager.CreateAsync(adminUser, "Admin@123");
+                IdentityUser admin = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+                IdentityResult result = userManager.CreateAsync(admin, adminPassword).Result;
 
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                    userManager.AddToRoleAsync(admin, "Admin").Wait();
+                }
+            }
+
+            // Create regular user
+            var userEmail = "user@user.com";
+            var userPassword = "User@123";
+            if (userManager.FindByEmailAsync(userEmail).Result == null)
+            {
+                IdentityUser user = new IdentityUser { UserName = userEmail, Email = userEmail };
+                IdentityResult result = userManager.CreateAsync(user, userPassword).Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "User").Wait();
                 }
             }
         }
