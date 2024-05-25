@@ -52,11 +52,19 @@ namespace CarFlex.Controllers
             [Bind("CarId,LocationID,Make,Model,Year,RegistrationNo,RentalPricePerDay,Availability")]
             Car car)
         {
+            car.Rentals = new List<Rental>(); // Assuming Rentals is a collection
+            
             if (ModelState.IsValid)
             {
-                _context.Add(car);
+                _context.Car.Add(car);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+            }
+            
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors)
+            {
+                Console.WriteLine(error.ErrorMessage);
             }
 
             return View(car);

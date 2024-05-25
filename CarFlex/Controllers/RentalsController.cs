@@ -52,7 +52,17 @@ namespace CarFlex.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(rental);
+                var car = await _context.Car.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
+                if (car == null)
+                {
+                    ModelState.AddModelError("CarId", "Invalid Car ID.");
+                    return View(rental);
+                }
+
+                var rentalDays = (rental.ReturnDate - rental.RentalDate).TotalDays;
+                rental.TotalCost = (decimal)rentalDays * car.RentalPricePerDay;
+
+                _context.Rental.Add(rental);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -91,6 +101,17 @@ namespace CarFlex.Controllers
             {
                 try
                 {
+                    // Calculate the total cost
+                    var car = await _context.Car.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
+                    if (car == null)
+                    {
+                        ModelState.AddModelError("CarId", "Invalid Car ID.");
+                        return View(rental);
+                    }
+
+                    var rentalDays = (rental.ReturnDate - rental.RentalDate).TotalDays;
+                    rental.TotalCost = (decimal)rentalDays * car.RentalPricePerDay;
+
                     _context.Update(rental);
                     await _context.SaveChangesAsync();
                 }

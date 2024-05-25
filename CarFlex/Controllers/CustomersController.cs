@@ -50,9 +50,11 @@ namespace CarFlex.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CustomerId,FirstName,LastName,Email,PhoneNumber,Address,DriversLicenseNumber")] Customer customer)
         {
+            customer.Rentals = new List<Rental>();
+            
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
+                _context.Customer.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

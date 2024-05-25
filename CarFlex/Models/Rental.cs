@@ -25,6 +25,6 @@ public class Rental
     [DataType(DataType.Currency)]
     public decimal TotalCost { get; set; }
 
-    public ICollection<Customer> Customers { get; set; }
-    public ICollection<Car> Cars { get; set; }
+    // public ICollection<Customer> Customers { get; set; }
+    // public ICollection<Car> Cars { get; set; }
 }

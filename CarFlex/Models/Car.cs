@@ -31,11 +31,11 @@ public class Car
     [Required]
     [Display(Name = "Rental price per day")]
     public decimal RentalPricePerDay { get; set; }
-
-    [Required]
+    
     [Display(Name = "Availability")]
     public bool Availability { get; set; }
 
-    public ICollection<Rental> Rentals { get; set; }
-    public ICollection<Location> Locations { get; set; }
+    public ICollection<Rental> Rentals { get; set; } = new List<Rental>();
+    // public ICollection<Location> Locations { get; set; }
+    // public virtual Location Location { get; set; }
 }

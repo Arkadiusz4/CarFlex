@@ -36,5 +36,5 @@ public class Customer
     [Display(Name = "Driver's License Number")]
     public string DriversLicenseNumber { get; set; }
 
-    public ICollection<Rental> Rentals { get; set; }
+    public ICollection<Rental> Rentals { get; set; } = new List<Rental>();
 }
