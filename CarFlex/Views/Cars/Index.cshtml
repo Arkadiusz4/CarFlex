@@ -35,9 +35,9 @@
         <th>
             @Html.DisplayNameFor(model => model.RentalPricePerDay)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Availability)
-        </th>
+        @* <th> *@
+        @*     @Html.DisplayNameFor(model => model.Availability) *@
+        @* </th> *@
     </tr>
     </thead>
     <tbody>
@@ -62,9 +62,9 @@
             <td>
                 @(item.RentalPricePerDay.ToString("C2", new CultureInfo("pl-PL")))
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Availability)
-            </td>
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Availability) *@
+            @* </td> *@
             <td>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
