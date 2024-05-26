@@ -1,0 +1,41 @@
+﻿@model IEnumerable<CarFlex.Models.CarStatsViewModel>
+
+@{
+    ViewData["Title"] = "Car Stats";
+    string sortOrder = ViewBag.CurrentSort as string;
+    string carIdSortParam = String.IsNullOrEmpty(sortOrder) ? "carId_desc" : "";
+    string rentalCountSortParam = sortOrder == "rentalCount" ? "rentalCount_desc" : "rentalCount";
+    string totalEarningsSortParam = sortOrder == "totalEarnings" ? "totalEarnings_desc" : "totalEarnings";
+}
+
+<h1>Car Stats</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            <a asp-action="CarStats" asp-route-sortOrder="@carIdSortParam" class="@(sortOrder == "carId" || sortOrder == "carId_desc" ? "sorted-column" : "")">Car ID</a>
+        </th>
+        <th>Make</th>
+        <th>Model</th>
+        <th>
+            <a asp-action="CarStats" asp-route-sortOrder="@rentalCountSortParam" class="@(sortOrder == "rentalCount" || sortOrder == "rentalCount_desc" ? "sorted-column" : "")">Rental Count</a>
+        </th>
+        <th>
+            <a asp-action="CarStats" asp-route-sortOrder="@totalEarningsSortParam" class="@(sortOrder == "totalEarnings" || sortOrder == "totalEarnings_desc" ? "sorted-column" : "")">Total Earnings</a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.CarId</td>
+            <td>@item.Make</td>
+            <td>@item.Model</td>
+            <td>@item.RentalCount</td>
+            <td>@item.TotalEarnings.ToString("C")</td>
+        </tr>
+    }
+    </tbody>
+</table>
