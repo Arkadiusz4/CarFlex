@@ -47,9 +47,22 @@
 <table class="table">
     <thead>
     <tr>
-        <th>
-            <a asp-action="Index" asp-route-sortOrder="@carIdSortParam">Car ID @if (currentSort == "carId_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
-        </th>
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@carIdSortParam">
+                    Car ID
+                    @if (currentSort == "carId_desc")
+                    {
+                        <span>&#9660;</span>
+                    }
+                    else
+                    {
+                        <span>&#9650;</span>
+                    }
+                </a>
+            </th>
+        }
         <th>
             Localization
         </th>
@@ -60,13 +73,33 @@
             @Html.DisplayNameFor(model => model.Model)
         </th>
         <th>
-            <a asp-action="Index" asp-route-sortOrder="@yearSortParam">Year @if (currentSort == "year_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
+            <a asp-action="Index" asp-route-sortOrder="@yearSortParam">
+                Year
+                @if (currentSort == "year_desc")
+                {
+                    <span>&#9660;</span>
+                }
+                else
+                {
+                    <span>&#9650;</span>
+                }
+            </a>
         </th>
         <th>
             @Html.DisplayNameFor(model => model.RegistrationNo)
         </th>
         <th>
-            <a asp-action="Index" asp-route-sortOrder="@priceSortParam">Rental Price @if (currentSort == "price_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
+            <a asp-action="Index" asp-route-sortOrder="@priceSortParam">
+                Rental Price
+                @if (currentSort == "price_desc")
+                {
+                    <span>&#9660;</span>
+                }
+                else
+                {
+                    <span>&#9650;</span>
+                }
+            </a>
         </th>
         <th></th>
     </tr>
@@ -75,7 +108,10 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>@Html.DisplayFor(modelItem => item.CarId)</td>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                <td>@Html.DisplayFor(modelItem => item.CarId)</td>
+            }
             <td>@item.Location.Address, @item.Location.City</td>
             <td>@Html.DisplayFor(modelItem => item.Make)</td>
             <td>@Html.DisplayFor(modelItem => item.Model)</td>
