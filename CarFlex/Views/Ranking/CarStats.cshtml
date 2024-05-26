@@ -2,10 +2,10 @@
 
 @{
     ViewData["Title"] = "Car Stats";
-    string sortOrder = ViewBag.CurrentSort as string;
-    string carIdSortParam = String.IsNullOrEmpty(sortOrder) ? "carId_desc" : "";
-    string rentalCountSortParam = sortOrder == "rentalCount" ? "rentalCount_desc" : "rentalCount";
-    string totalEarningsSortParam = sortOrder == "totalEarnings" ? "totalEarnings_desc" : "totalEarnings";
+    string currentSort = ViewBag.CurrentSort as string;
+    string carIdSortParam = String.IsNullOrEmpty(currentSort) ? "carId_desc" : "";
+    string rentalCountSortParam = currentSort == "RentalCount" ? "rentalCount_desc" : "RentalCount";
+    string totalEarningsSortParam = currentSort == "TotalEarnings" ? "totalEarnings_desc" : "TotalEarnings";
 }
 
 <h1>Car Stats</h1>
@@ -14,15 +14,15 @@
     <thead>
     <tr>
         <th>
-            <a asp-action="CarStats" asp-route-sortOrder="@carIdSortParam" class="@(sortOrder == "carId" || sortOrder == "carId_desc" ? "sorted-column" : "")">Car ID</a>
+            <a asp-action="CarStats" asp-route-sortOrder="@carIdSortParam">Car ID @if (currentSort == "carId_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
         <th>Make</th>
         <th>Model</th>
         <th>
-            <a asp-action="CarStats" asp-route-sortOrder="@rentalCountSortParam" class="@(sortOrder == "rentalCount" || sortOrder == "rentalCount_desc" ? "sorted-column" : "")">Rental Count</a>
+            <a asp-action="CarStats" asp-route-sortOrder="@rentalCountSortParam">Rental Count @if (currentSort == "rentalCount_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
         <th>
-            <a asp-action="CarStats" asp-route-sortOrder="@totalEarningsSortParam" class="@(sortOrder == "totalEarnings" || sortOrder == "totalEarnings_desc" ? "sorted-column" : "")">Total Earnings</a>
+            <a asp-action="CarStats" asp-route-sortOrder="@totalEarningsSortParam">Total Earnings @if (currentSort == "totalEarnings_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
     </tr>
     </thead>

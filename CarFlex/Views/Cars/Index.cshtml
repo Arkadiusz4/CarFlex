@@ -1,12 +1,42 @@
-@using System.Globalization
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model IEnumerable<Car>
+@model IEnumerable<CarFlex.Models.Car>
 
 @{
     ViewData["Title"] = "Index";
+    string currentSort = ViewBag.CurrentSort as string;
+    string carIdSortParam = String.IsNullOrEmpty(currentSort) ? "carId_desc" : "";
+    string yearSortParam = currentSort == "Year" ? "year_desc" : "Year";
+    string priceSortParam = currentSort == "Price" ? "price_desc" : "Price";
 }
 
 <h1>Index</h1>
+
+<form method="get" asp-action="Index">
+    <div class="form-group">
+        <label for="makeFilter">Make</label>
+        <select id="makeFilter" name="makeFilter" class="form-control" asp-items="ViewBag.MakeFilter">
+            <option value="">All</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="modelFilter">Model</label>
+        <select id="modelFilter" name="modelFilter" class="form-control" asp-items="ViewBag.ModelFilter">
+            <option value="">All</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="yearFilter">Year</label>
+        <select id="yearFilter" name="yearFilter" class="form-control" asp-items="ViewBag.YearFilter">
+            <option value="">All</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="availabilityFilter">Availability</label>
+        <select id="availabilityFilter" name="availabilityFilter" class="form-control" asp-items="ViewBag.AvailabilityFilter">
+            <option value="">All</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
 
 <p>
     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -18,7 +48,7 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CarId)
+            <a asp-action="Index" asp-route-sortOrder="@carIdSortParam">Car ID @if (currentSort == "carId_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
         <th>
             @Html.DisplayNameFor(model => model.LocationID)
@@ -30,47 +60,32 @@
             @Html.DisplayNameFor(model => model.Model)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Year)
+            <a asp-action="Index" asp-route-sortOrder="@yearSortParam">Year @if (currentSort == "year_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
         <th>
             @Html.DisplayNameFor(model => model.RegistrationNo)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RentalPricePerDay)
+            <a asp-action="Index" asp-route-sortOrder="@priceSortParam">Rental Price @if (currentSort == "price_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
-        @* <th> *@
-        @*     @Html.DisplayNameFor(model => model.Availability) *@
-        @* </th> *@
+        <th>
+            @Html.DisplayNameFor(model => model.Availability)
+        </th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
     @foreach (var item in Model)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CarId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Make)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegistrationNo)
-            </td>
-            <td>
-                @(item.RentalPricePerDay.ToString("C2", new CultureInfo("pl-PL")))
-            </td>
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Availability) *@
-            @* </td> *@
+            <td>@Html.DisplayFor(modelItem => item.CarId)</td>
+            <td>@Html.DisplayFor(modelItem => item.LocationID)</td>
+            <td>@Html.DisplayFor(modelItem => item.Make)</td>
+            <td>@Html.DisplayFor(modelItem => item.Model)</td>
+            <td>@Html.DisplayFor(modelItem => item.Year)</td>
+            <td>@Html.DisplayFor(modelItem => item.RegistrationNo)</td>
+            <td>@Html.DisplayFor(modelItem => item.RentalPricePerDay)</td>
+            <td>@Html.DisplayFor(modelItem => item.Availability)</td>
             <td>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {

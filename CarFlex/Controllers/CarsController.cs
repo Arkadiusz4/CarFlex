@@ -15,9 +15,72 @@ namespace CarFlex.Controllers
         }
 
         // GET: Cars
-        public async Task<IActionResult> Index()
+        // public async Task<IActionResult> Index()
+        // {
+        //     return View(await _context.Car.ToListAsync());
+        // }
+        public async Task<IActionResult> Index(string makeFilter, string modelFilter, int? yearFilter, bool? availabilityFilter, string sortOrder)
         {
-            return View(await _context.Car.ToListAsync());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.CarIdSortParm = String.IsNullOrEmpty(sortOrder) ? "carId_desc" : "";
+            ViewBag.YearSortParm = sortOrder == "Year" ? "year_desc" : "Year";
+            ViewBag.PriceSortParm = sortOrder == "Price" ? "price_desc" : "Price";
+
+            var makes = _context.Car.Select(c => c.Make).Distinct().ToList();
+            var models = _context.Car.Select(c => c.Model).Distinct().ToList();
+            var years = _context.Car.Select(c => c.Year).Distinct().ToList();
+
+            ViewData["MakeFilter"] = new SelectList(makes);
+            ViewData["ModelFilter"] = new SelectList(models);
+            ViewData["YearFilter"] = new SelectList(years);
+            ViewData["AvailabilityFilter"] = new SelectList(new[] { true, false });
+
+            var cars = from c in _context.Car
+                       select c;
+
+            if (!string.IsNullOrEmpty(makeFilter))
+            {
+                cars = cars.Where(c => c.Make == makeFilter);
+            }
+
+            if (!string.IsNullOrEmpty(modelFilter))
+            {
+                cars = cars.Where(c => c.Model == modelFilter);
+            }
+
+            if (yearFilter.HasValue)
+            {
+                cars = cars.Where(c => c.Year == yearFilter);
+            }
+
+            if (availabilityFilter.HasValue)
+            {
+                cars = cars.Where(c => c.Availability == availabilityFilter);
+            }
+
+            switch (sortOrder)
+            {
+                case "carId_desc":
+                    cars = cars.OrderByDescending(c => c.CarId);
+                    break;
+                case "Year":
+                    cars = cars.OrderBy(c => c.Year);
+                    break;
+                case "year_desc":
+                    cars = cars.OrderByDescending(c => c.Year);
+                    break;
+                case "Price":
+                    cars = cars.OrderBy(c => (double)c.RentalPricePerDay);
+                    break;
+                case "price_desc":
+                    cars = cars.OrderByDescending(c => (double)c.RentalPricePerDay);
+                    break;
+                default:
+                    cars = cars.OrderBy(c => c.CarId);
+                    break;
+            }
+
+            return View(await cars.ToListAsync());
         }
 
         // GET: Cars/Details/5

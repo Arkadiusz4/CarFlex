@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace CarFlex.Controllers
 {
@@ -20,6 +19,9 @@ namespace CarFlex.Controllers
         public async Task<IActionResult> CarStats(string sortOrder)
         {
             ViewBag.CurrentSort = sortOrder;
+            ViewBag.CarIdSortParm = String.IsNullOrEmpty(sortOrder) ? "carId_desc" : "";
+            ViewBag.RentalCountSortParm = sortOrder == "RentalCount" ? "rentalCount_desc" : "RentalCount";
+            ViewBag.TotalEarningsSortParm = sortOrder == "TotalEarnings" ? "totalEarnings_desc" : "TotalEarnings";
 
             var carStats = await _context.Rental
                 .GroupBy(r => r.CarId)
@@ -43,19 +45,16 @@ namespace CarFlex.Controllers
 
             switch (sortOrder)
             {
-                case "carId":
-                    carStatsViewModel = carStatsViewModel.OrderBy(c => c.CarId);
-                    break;
                 case "carId_desc":
                     carStatsViewModel = carStatsViewModel.OrderByDescending(c => c.CarId);
                     break;
-                case "rentalCount":
+                case "RentalCount":
                     carStatsViewModel = carStatsViewModel.OrderBy(c => c.RentalCount);
                     break;
                 case "rentalCount_desc":
                     carStatsViewModel = carStatsViewModel.OrderByDescending(c => c.RentalCount);
                     break;
-                case "totalEarnings":
+                case "TotalEarnings":
                     carStatsViewModel = carStatsViewModel.OrderBy(c => c.TotalEarnings);
                     break;
                 case "totalEarnings_desc":
