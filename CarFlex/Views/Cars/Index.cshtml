@@ -68,9 +68,6 @@
         <th>
             <a asp-action="Index" asp-route-sortOrder="@priceSortParam">Rental Price @if (currentSort == "price_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Availability)
-        </th>
         <th></th>
     </tr>
     </thead>
@@ -85,7 +82,6 @@
             <td>@Html.DisplayFor(modelItem => item.Year)</td>
             <td>@Html.DisplayFor(modelItem => item.RegistrationNo)</td>
             <td>@Html.DisplayFor(modelItem => item.RentalPricePerDay)</td>
-            <td>@Html.DisplayFor(modelItem => item.Availability)</td>
             <td>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
@@ -97,7 +93,7 @@
                 {
                     @if (item.Availability)
                     {
-                        <a asp-action="Rent" asp-route-id="@item.CarId" class="btn btn-primary">Rent</a>
+                        <a asp-action="Create" asp-controller="Rentals" asp-route-carId="@item.CarId" class="btn btn-primary">Rent</a>
                     }
                     else
                     {

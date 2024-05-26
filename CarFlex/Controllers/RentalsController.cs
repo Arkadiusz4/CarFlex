@@ -39,7 +39,7 @@ namespace CarFlex.Controllers
         }
 
         // GET: Rentals/Create
-        public IActionResult Create()
+        public IActionResult Create(int? carId)
         {
             var cars = _context.Car.Select(c => new 
             {

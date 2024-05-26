@@ -145,6 +145,19 @@ namespace CarFlex.Data
                     userManager.AddToRoleAsync(admin, "Admin").Wait();
                 }
             }
+            
+            var userEmail = "user@user.com";
+            var userPassword = "User@123";
+            if (userManager.FindByEmailAsync(userEmail).Result == null)
+            {
+                IdentityUser user = new IdentityUser { UserName = userEmail, Email = userEmail };
+                IdentityResult result = userManager.CreateAsync(user, userPassword).Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(user, "User").Wait();
+                }
+            }
         }
     }
 }
