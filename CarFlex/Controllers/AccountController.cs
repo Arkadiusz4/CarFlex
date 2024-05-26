@@ -18,7 +18,7 @@ namespace CarFlex
             _userManager = userManager;
             _signInManager = signInManager;
         }
-
+        
         [HttpGet]
         public IActionResult Login() => View();
 
@@ -28,8 +28,7 @@ namespace CarFlex
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe,
-                    lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");
@@ -52,33 +51,26 @@ namespace CarFlex
         // GET: Account
         public async Task<IActionResult> Index()
         {
-            var identityUsers = await _userManager.Users.ToListAsync();
-            var users = identityUsers.Select(u => new User
-            {
-                UserId = u.Id,
-                Username = u.UserName,
-                // Przypisz inne właściwości, jeśli są dostępne
-            }).ToList();
-
-            return View(users);        }
+            return View(await _context.User.ToListAsync());
+        }
 
         // GET: Account/Details/5
-        // public async Task<IActionResult> Details(int? id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     var user = await _context.User
-        //         .FirstOrDefaultAsync(m => m.UserId == id);
-        //     if (user == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     return View(user);
-        // }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.User
+                .FirstOrDefaultAsync(m => m.UserId == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
 
         // GET: Account/Create
         public IActionResult Create()
@@ -89,83 +81,19 @@ namespace CarFlex
         // POST: Account/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Create([Bind("UserId,Username,Password,IsAdmin")] User user)
-        // {
-        //     if (ModelState.IsValid)
-        //     {
-        //         _context.Add(user);
-        //         await _context.SaveChangesAsync();
-        //
-        //         var customer = new Customer
-        //         {
-        //             FirstName = user.Username,
-        //             LastName = "",
-        //             Email = user.Username,
-        //             PhoneNumber = "",
-        //             Address = "",
-        //             DriversLicenseNumber = ""
-        //         };
-        //
-        //         _context.Add(customer);
-        //         await _context.SaveChangesAsync();
-        //
-        //         return RedirectToAction(nameof(Index));
-        //     }
-        //
-        //     return View(user);
-        // }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserId,Username,Password,IsAdmin")] User user)
         {
             if (ModelState.IsValid)
-                
             {
-                var identityUser = new IdentityUser
-                {
-                    UserName = user.Username,
-                    // Skopiuj inne właściwości, jeśli są potrzebne
-                };
-                // Dodawanie użytkownika do bazy danych
-                var result = await _userManager.CreateAsync(identityUser, user.Password);
-
-                if (result.Succeeded)
-                {
-                    // Dodawanie roli użytkownika (jeśli jest adminem)
-                    if (user.IsAdmin)
-                    {
-                        await _userManager.AddToRoleAsync(identityUser, "Admin");
-                    }
-
-                    // Tworzenie klienta powiązanego z użytkownikiem
-                    var customer = new Customer
-                    {
-                        FirstName = user.Username,
-                        LastName = "",
-                        Email = user.Username,
-                        PhoneNumber = "",
-                        Address = "",
-                        DriversLicenseNumber = ""
-                    };
-                    _context.Customer.Add(customer);
-                    await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(Index));
-                }
-
-                // Jeśli tworzenie użytkownika nie powiodło się, dodaj błędy do ModelState
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                _context.Add(user);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(user);
         }
-
 
         // GET: Account/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -187,57 +115,57 @@ namespace CarFlex
         // POST: Account/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Password,IsAdmin")] User user)
-        // {
-        //     if (id != user.UserId)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     if (ModelState.IsValid)
-        //     {
-        //         try
-        //         {
-        //             _context.Update(user);
-        //             await _context.SaveChangesAsync();
-        //         }
-        //         catch (DbUpdateConcurrencyException)
-        //         {
-        //             if (!UserExists(user.UserId))
-        //             {
-        //                 return NotFound();
-        //             }
-        //             else
-        //             {
-        //                 throw;
-        //             }
-        //         }
-        //
-        //         return RedirectToAction(nameof(Index));
-        //     }
-        //
-        //     return View(user);
-        // }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,Password,IsAdmin")] User user)
+        {
+            if (id != user.UserId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(user);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.UserId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(user);
+        }
 
         // GET: Account/Delete/5
-        // public async Task<IActionResult> Delete(int? id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     var user = await _context.User
-        //         .FirstOrDefaultAsync(m => m.UserId == id);
-        //     if (user == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     return View(user);
-        // }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.User
+                .FirstOrDefaultAsync(m => m.UserId == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
 
         // POST: Account/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -254,9 +182,9 @@ namespace CarFlex
             return RedirectToAction(nameof(Index));
         }
 
-        // private bool UserExists(int id)
-        // {
-        //     return _context.User.Any(e => e.UserId == id);
-        // }
+        private bool UserExists(int id)
+        {
+            return _context.User.Any(e => e.UserId == id);
+        }
     }
 }

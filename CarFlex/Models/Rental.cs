@@ -16,8 +16,8 @@ public class Rental
     public DateTime RentalDate { get; set; }
 
     [Required]
-    [Display(Name = "Return date")]
-    [DataType(DataType.DateTime)]
+    [DataType(DataType.Date)]
+    [DateAfter("RentalDate", ErrorMessage = "Return date must be after rental date.")]
     public DateTime ReturnDate { get; set; }
 
     [Required]
@@ -27,4 +27,31 @@ public class Rental
 
     // public ICollection<Customer> Customers { get; set; }
     // public ICollection<Car> Cars { get; set; }
+}
+
+public class DateAfterAttribute : ValidationAttribute
+{
+    private readonly string _comparisonProperty;
+
+    public DateAfterAttribute(string comparisonProperty)
+    {
+        _comparisonProperty = comparisonProperty;
+    }
+
+    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    {
+        var currentValue = (DateTime)value;
+
+        var property = validationContext.ObjectType.GetProperty(_comparisonProperty);
+
+        if (property == null)
+            throw new ArgumentException("Property with this name not found");
+
+        var comparisonValue = (DateTime)property.GetValue(validationContext.ObjectInstance);
+
+        if (currentValue <= comparisonValue)
+            return new ValidationResult(ErrorMessage);
+
+        return ValidationResult.Success;
+    }
 }
