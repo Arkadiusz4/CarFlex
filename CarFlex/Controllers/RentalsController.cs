@@ -67,6 +67,16 @@ namespace CarFlex.Controllers
         {
             if (ModelState.IsValid)
             {
+                var overlappingRentals = await _context.Rental
+                    .Where(r => r.CarId == rental.CarId && r.ReturnDate > rental.RentalDate && r.RentalDate < rental.ReturnDate)
+                    .ToListAsync();
+
+                if (overlappingRentals.Any())
+                {
+                    ModelState.AddModelError("", "The car is already rented for the selected period.");
+                    return View(rental);
+                }
+                
                 var car = await _context.Car.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
                 if (car == null)
                 {
@@ -158,6 +168,17 @@ namespace CarFlex.Controllers
             {
                 try
                 {
+                    // Check for overlapping rental periods
+                    var overlappingRentals = await _context.Rental
+                        .Where(r => r.CarId == rental.CarId && r.RentalId != rental.RentalId && r.ReturnDate > rental.RentalDate && r.RentalDate < rental.ReturnDate)
+                        .ToListAsync();
+
+                    if (overlappingRentals.Any())
+                    {
+                        ModelState.AddModelError("", "The car is already rented for the selected period.");
+                        return View(rental);
+                    }
+                    
                     // Calculate the total cost
                     var car = await _context.Car.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
                     if (car == null)

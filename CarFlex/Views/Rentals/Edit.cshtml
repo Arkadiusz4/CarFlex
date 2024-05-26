@@ -49,12 +49,20 @@
     <script>
         document.getElementById('rentalDate').addEventListener('input', function (e) {
             var value = e.target.value;
-            e.target.value = value.slice(0, 14) + '00';
+            var dateTime = new Date(value);
+            if (dateTime.getMinutes() !== 0 || dateTime.getSeconds() !== 0) {
+                dateTime.setMinutes(0, 0, 0); // set minutes, seconds, and milliseconds to 0
+                e.target.value = dateTime.toISOString().slice(0, 16); // format back to datetime-local value
+            }
         });
-        
+
         document.getElementById('returnDate').addEventListener('input', function (e) {
             var value = e.target.value;
-            e.target.value = value.slice(0, 14) + '00';
+            var dateTime = new Date(value);
+            if (dateTime.getMinutes() !== 0 || dateTime.getSeconds() !== 0) {
+                dateTime.setMinutes(0, 0, 0); // set minutes, seconds, and milliseconds to 0
+                e.target.value = dateTime.toISOString().slice(0, 16); // format back to datetime-local value
+            }
         });
     </script>
 }

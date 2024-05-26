@@ -44,10 +44,10 @@
                 @Html.DisplayFor(modelItem => item.CarId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RentalDate)
+                @item.RentalDate.ToString("MM/dd/yyyy HH:mm")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ReturnDate)
+                @item.ReturnDate.ToString("MM/dd/yyyy HH:mm")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TotalCost)
