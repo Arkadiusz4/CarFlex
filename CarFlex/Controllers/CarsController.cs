@@ -1,7 +1,6 @@
 using CarFlex.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CarFlex.Controllers
 {
@@ -41,12 +40,6 @@ namespace CarFlex.Controllers
         // GET: Cars/Create
         public IActionResult Create()
         {
-            var locations = _context.Location.Select(l => new 
-            {
-                LocationId = l.LocationId,
-                Display = l.LocationId + " - " + l.Address + ", " + l.City
-            }).ToList();
-            ViewData["LocationID"] = new SelectList(locations, "LocationId", "Display");
             return View();
         }
 
@@ -74,12 +67,6 @@ namespace CarFlex.Controllers
                 Console.WriteLine(error.ErrorMessage);
             }
 
-            var locations = _context.Location.Select(l => new 
-            {
-                LocationId = l.LocationId,
-                Display = l.LocationId + " - " + l.Address + ", " + l.City
-            }).ToList();
-            ViewData["LocationID"] = new SelectList(locations, "LocationId", "Display", car.LocationID);
             return View(car);
         }
 
@@ -97,14 +84,7 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var locations = _context.Location.Select(l => new 
-            {
-                LocationId = l.LocationId,
-                Display = l.LocationId + " - " + l.Address + ", " + l.City
-            }).ToList();
-            ViewData["LocationID"] = new SelectList(locations, "LocationId", "Display", car.LocationID);
-
-            return View(car);        
+            return View(car);
         }
 
         // POST: Cars/Edit/5
@@ -142,13 +122,6 @@ namespace CarFlex.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-
-            var locations = _context.Location.Select(l => new 
-            {
-                LocationId = l.LocationId,
-                Display = l.LocationId + " - " + l.Address + ", " + l.City
-            }).ToList();
-            ViewData["LocationID"] = new SelectList(locations, "LocationId", "Display", car.LocationID);
 
             return View(car);
         }
