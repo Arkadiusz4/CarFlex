@@ -35,8 +35,8 @@ namespace CarFlex.Controllers
             ViewData["YearFilter"] = new SelectList(years);
             ViewData["AvailabilityFilter"] = new SelectList(new[] { true, false });
 
-            var cars = from c in _context.Car
-                       select c;
+            var cars = from c in _context.Car.Include(c => c.Location)
+                select c;
 
             if (!string.IsNullOrEmpty(makeFilter))
             {

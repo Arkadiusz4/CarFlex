@@ -51,7 +51,7 @@
             <a asp-action="Index" asp-route-sortOrder="@carIdSortParam">Car ID @if (currentSort == "carId_desc") { <span>&#9660;</span> } else { <span>&#9650;</span> }</a>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LocationID)
+            Localization
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Make)
@@ -79,7 +79,7 @@
     {
         <tr>
             <td>@Html.DisplayFor(modelItem => item.CarId)</td>
-            <td>@Html.DisplayFor(modelItem => item.LocationID)</td>
+            <td>@item.Location.Address, @item.Location.City</td>
             <td>@Html.DisplayFor(modelItem => item.Make)</td>
             <td>@Html.DisplayFor(modelItem => item.Model)</td>
             <td>@Html.DisplayFor(modelItem => item.Year)</td>

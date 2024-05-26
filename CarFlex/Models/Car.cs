@@ -37,5 +37,5 @@ public class Car
 
     public ICollection<Rental> Rentals { get; set; } = new List<Rental>();
     // public ICollection<Location> Locations { get; set; }
-    // public virtual Location Location { get; set; }
+    public virtual Location Location { get; set; }
 }

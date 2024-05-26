@@ -25,52 +25,52 @@ namespace CarFlex.Data
             {
                 new Car
                 {
-                    Make = "Toyota", Model = "Corolla", Year = 2020, RegistrationNo = "ABC123", RentalPricePerDay = 50,
+                    LocationID = 1, Make = "Toyota", Model = "Corolla", Year = 2020, RegistrationNo = "ABC123", RentalPricePerDay = 50,
                     Availability = true
                 },
                 new Car
                 {
-                    Make = "Honda", Model = "Civic", Year = 2019, RegistrationNo = "DEF456", RentalPricePerDay = 45,
+                    LocationID = 2, Make = "Honda", Model = "Civic", Year = 2019, RegistrationNo = "DEF456", RentalPricePerDay = 45,
                     Availability = true
                 },
                 new Car
                 {
-                    Make = "Opel", Model = "Astra", Year = 2023, RegistrationNo = "ABC124", RentalPricePerDay = 60,
+                    LocationID = 3, Make = "Opel", Model = "Astra", Year = 2023, RegistrationNo = "ABC124", RentalPricePerDay = 60,
                     Availability = true
                 },
                 new Car
                 {
-                    Make = "BMW", Model = "M4", Year = 2024, RegistrationNo = "FGH414", RentalPricePerDay = 2000,
+                    LocationID = 4, Make = "BMW", Model = "M4", Year = 2024, RegistrationNo = "FGH414", RentalPricePerDay = 2000,
                     Availability = true
                 },
                 new Car
                 {
-                    Make = "Ford", Model = "Focus", Year = 2021, RegistrationNo = "GHI789", RentalPricePerDay = 55,
+                    LocationID = 5, Make = "Ford", Model = "Focus", Year = 2021, RegistrationNo = "GHI789", RentalPricePerDay = 55,
                     Availability = true
                 },
                 new Car
                 {
-                    Make = "Chevrolet", Model = "Malibu", Year = 2022, RegistrationNo = "JKL012",
+                    LocationID = 6, Make = "Chevrolet", Model = "Malibu", Year = 2022, RegistrationNo = "JKL012",
                     RentalPricePerDay = 65, Availability = true
                 },
                 new Car
                 {
-                    Make = "Nissan", Model = "Sentra", Year = 2020, RegistrationNo = "MNO345", RentalPricePerDay = 50,
+                    LocationID = 7, Make = "Nissan", Model = "Sentra", Year = 2020, RegistrationNo = "MNO345", RentalPricePerDay = 50,
                     Availability = true
                 },
                 new Car
                 {
-                    Make = "Hyundai", Model = "Elantra", Year = 2021, RegistrationNo = "PQR678", RentalPricePerDay = 55,
+                    LocationID = 1, Make = "Hyundai", Model = "Elantra", Year = 2021, RegistrationNo = "PQR678", RentalPricePerDay = 55,
                     Availability = true
                 },
                 new Car
                 {
-                    Make = "Volkswagen", Model = "Jetta", Year = 2022, RegistrationNo = "STU901",
+                    LocationID = 2, Make = "Volkswagen", Model = "Jetta", Year = 2022, RegistrationNo = "STU901",
                     RentalPricePerDay = 60, Availability = true
                 },
                 new Car
                 {
-                    Make = "Mazda", Model = "3", Year = 2023, RegistrationNo = "VWX234", RentalPricePerDay = 70,
+                    LocationID = 3, Make = "Mazda", Model = "3", Year = 2023, RegistrationNo = "VWX234", RentalPricePerDay = 70,
                     Availability = true
                 }
             };
