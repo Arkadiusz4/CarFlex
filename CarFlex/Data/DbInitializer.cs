@@ -40,9 +40,39 @@ namespace CarFlex.Data
                 },
                 new Car
                 {
-                    Make = "BMW", Model = "M4", Year = 2024, RegistrationNo = "HWDP", RentalPricePerDay = 2000,
+                    Make = "BMW", Model = "M4", Year = 2024, RegistrationNo = "FGH414", RentalPricePerDay = 2000,
                     Availability = true
                 },
+                new Car
+                {
+                    Make = "Ford", Model = "Focus", Year = 2021, RegistrationNo = "GHI789", RentalPricePerDay = 55,
+                    Availability = true
+                },
+                new Car
+                {
+                    Make = "Chevrolet", Model = "Malibu", Year = 2022, RegistrationNo = "JKL012",
+                    RentalPricePerDay = 65, Availability = true
+                },
+                new Car
+                {
+                    Make = "Nissan", Model = "Sentra", Year = 2020, RegistrationNo = "MNO345", RentalPricePerDay = 50,
+                    Availability = true
+                },
+                new Car
+                {
+                    Make = "Hyundai", Model = "Elantra", Year = 2021, RegistrationNo = "PQR678", RentalPricePerDay = 55,
+                    Availability = true
+                },
+                new Car
+                {
+                    Make = "Volkswagen", Model = "Jetta", Year = 2022, RegistrationNo = "STU901",
+                    RentalPricePerDay = 60, Availability = true
+                },
+                new Car
+                {
+                    Make = "Mazda", Model = "3", Year = 2023, RegistrationNo = "VWX234", RentalPricePerDay = 70,
+                    Availability = true
+                }
             };
 
             foreach (var car in cars)
@@ -76,8 +106,13 @@ namespace CarFlex.Data
 
             var locations = new Location[]
             {
-                new Location { Address = "123 Car St", City = "CityA", State = "StateA", PostalCode = "12345" },
-                new Location { Address = "456 Auto Blvd", City = "CityB", State = "StateB", PostalCode = "67890" }
+                new Location { Address = "123 Car St", City = "Krakow", State = "StateA", PostalCode = "12345" },
+                new Location { Address = "456 Auto Blvd", City = "Krakow", State = "StateA", PostalCode = "12346" },
+                new Location { Address = "789 Motor Ave", City = "Krakow", State = "StateA", PostalCode = "12347" },
+                new Location { Address = "321 Drive Rd", City = "Warsaw", State = "StateB", PostalCode = "23456" },
+                new Location { Address = "654 Road St", City = "Warsaw", State = "StateB", PostalCode = "23457" },
+                new Location { Address = "987 Wheel Ln", City = "Gdansk", State = "StateC", PostalCode = "34567" },
+                new Location { Address = "123 Route Blvd", City = "Gdansk", State = "StateC", PostalCode = "34568" }
             };
 
             foreach (var location in locations)
@@ -108,20 +143,6 @@ namespace CarFlex.Data
                 if (result.Succeeded)
                 {
                     userManager.AddToRoleAsync(admin, "Admin").Wait();
-                }
-            }
-
-            // Create regular user
-            var userEmail = "user@user.com";
-            var userPassword = "User@123";
-            if (userManager.FindByEmailAsync(userEmail).Result == null)
-            {
-                IdentityUser user = new IdentityUser { UserName = userEmail, Email = userEmail };
-                IdentityResult result = userManager.CreateAsync(user, userPassword).Result;
-
-                if (result.Succeeded)
-                {
-                    userManager.AddToRoleAsync(user, "User").Wait();
                 }
             }
         }
