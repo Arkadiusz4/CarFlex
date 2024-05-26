@@ -1,11 +1,18 @@
-using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
-namespace CarFlex.Models;
-
-public class User
+namespace CarFlex.Models
 {
-    public int UserId { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public bool IsAdmin { get; set; }
+    public class User
+    {
+        public string UserId { get; set; }
+
+        [Required(ErrorMessage = "Username is required")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        public bool IsAdmin { get; set; }
+    }
 }
