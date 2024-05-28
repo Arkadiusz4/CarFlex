@@ -39,7 +39,7 @@
 </form>
 
 <p>
-    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    @if (Context.Session.GetString("Role") == "Admin")
     {
         <a asp-action="Create" class="btn btn-primary">Create New</a>
     }
@@ -47,7 +47,7 @@
 <table class="table">
     <thead>
     <tr>
-        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        @if (Context.Session.GetString("Role") == "Admin")
         {
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@carIdSortParam">
@@ -108,7 +108,7 @@
     @foreach (var item in Model)
     {
         <tr>
-            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            @if (Context.Session.GetString("Role") == "Admin")
             {
                 <td>@Html.DisplayFor(modelItem => item.CarId)</td>
             }
@@ -125,7 +125,7 @@
                     <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-info">Details</a>
                     <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-danger">Delete</a>
                 }
-                @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                @if (Context.Session.GetString("Role") == "User")
                 {
                     @if (item.Availability)
                     {

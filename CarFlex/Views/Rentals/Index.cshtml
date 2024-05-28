@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    @if (Context.Session.GetString("Role") == "Admin")
     {
         <a asp-action="Create" class="btn btn-primary">Create New</a>
     }
