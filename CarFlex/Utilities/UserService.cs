@@ -24,7 +24,7 @@ public class UserService : IUserService
     {
         var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
 
-        if (user == null || !PasswordHasher.VerifyPassword(password, user.PasswordHash))
+        if (user == null || !PasswordHasher.VerifyPassword(password, user.HashedPassword))
         {
             return null;
         }
@@ -39,7 +39,7 @@ public class UserService : IUserService
             throw new Exception("Username already exists");
         }
 
-        user.PasswordHash = PasswordHasher.HashPassword(password);
+        user.HashedPassword = PasswordHasher.HashPassword(password);
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 

@@ -11,7 +11,7 @@ namespace CarFlex.Models
 
         [NotMapped] [Required] public string Password { get; set; }
 
-        public string PasswordHash { get; set; }
+        [Required] public string HashedPassword { get; set; }
 
         [StringLength(50)] public string Role { get; set; }
     }

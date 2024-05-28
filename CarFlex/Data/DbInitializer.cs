@@ -140,18 +140,18 @@ namespace CarFlex.Data
             var admin = new User
             {
                 Username = "admin",
-                PasswordHash = PasswordHasher.HashPassword("admin123"),
+                HashedPassword = PasswordHasher.HashPassword("admin123"),
                 Role = "Admin"
             };
 
             context.Users.Add(admin);
             context.SaveChanges();
             Console.WriteLine("Admin user seeded.");
-            
+
             var user = new User
             {
                 Username = "user",
-                PasswordHash = PasswordHasher.HashPassword("user123"),
+                HashedPassword = PasswordHasher.HashPassword("user123"),
                 Role = "User"
             };
 

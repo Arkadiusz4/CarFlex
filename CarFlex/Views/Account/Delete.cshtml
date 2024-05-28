@@ -1,7 +1,7 @@
 @model CarFlex.Models.User
 
 @{
-ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete";
 }
 
 <h2>Delete</h2>
@@ -9,7 +9,7 @@ ViewData["Title"] = "Delete";
 <h3>Are you sure you want to delete this?</h3>
 <div>
     <h4>User</h4>
-    <hr />
+    <hr/>
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Username)
@@ -25,9 +25,13 @@ ViewData["Title"] = "Delete";
         </dd>
     </dl>
 
-    <form asp-action="DeleteConfirmed">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id"/>
+        <input type="submit" value="Delete" class="btn btn-danger"/> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}

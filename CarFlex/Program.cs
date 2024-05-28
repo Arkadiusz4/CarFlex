@@ -1,20 +1,15 @@
 using CarFlex.Data;
 using CarFlex.Utilities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<CarFlexDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CarFlexDbContext") ??
                       throw new InvalidOperationException("Connection string 'CarFlexDbContext' not found.")));
 
 builder.Services.AddScoped<IUserService, UserService>();
-
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
 
 builder.Services.AddSession(options =>
 {
@@ -22,9 +17,6 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
 
 var app = builder.Build();
 

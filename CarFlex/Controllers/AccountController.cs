@@ -84,7 +84,7 @@ namespace CarFlex.Controllers
             {
                 try
                 {
-                    user.PasswordHash = PasswordHasher.HashPassword(user.Password);
+                    user.HashedPassword = PasswordHasher.HashPassword(user.Password); // Haszowanie hasła
                     _context.Add(user);
                     await _context.SaveChangesAsync();
                     _logger.LogInformation("User {Username} created successfully with role {Role}", user.Username,
@@ -111,7 +111,6 @@ namespace CarFlex.Controllers
 
             return View(user);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -147,7 +146,8 @@ namespace CarFlex.Controllers
                     existingUser.Username = user.Username;
                     if (!string.IsNullOrEmpty(user.Password))
                     {
-                        existingUser.PasswordHash = PasswordHasher.HashPassword(user.Password);
+                        existingUser.HashedPassword =
+                            PasswordHasher.HashPassword(user.Password); // Haszowanie nowego hasła
                     }
 
                     existingUser.Role = user.Role;
@@ -190,8 +190,14 @@ namespace CarFlex.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarFlex.Migrations
 {
     [DbContext(typeof(CarFlexDbContext))]
-    [Migration("20240528162155_InitialCreate")]
+    [Migration("20240528212204_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -161,18 +161,19 @@ namespace CarFlex.Migrations
                     b.ToTable("Rentals");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("CarFlex.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Role")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Username")
