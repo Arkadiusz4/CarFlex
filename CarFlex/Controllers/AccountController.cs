@@ -121,57 +121,51 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            return View(user);
+            var viewModel = new UserEditViewModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Role")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Role")] UserEditViewModel viewModel)
         {
-            if (id != user.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                var existingUser = await _context.Users.FindAsync(id);
+                if (existingUser == null)
                 {
-                    var existingUser = await _context.Users.FindAsync(id);
-                    if (existingUser == null)
-                    {
-                        return NotFound();
-                    }
-
-                    existingUser.Username = user.Username;
-                    if (!string.IsNullOrEmpty(user.Password))
-                    {
-                        existingUser.HashedPassword =
-                            PasswordHasher.HashPassword(user.Password); // Haszowanie nowego hasła
-                    }
-
-                    existingUser.Role = user.Role;
-
-                    _context.Update(existingUser);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                existingUser.Username = viewModel.Username;
+                if (!string.IsNullOrEmpty(viewModel.Password))
                 {
-                    if (!await UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    existingUser.HashedPassword =
+                        PasswordHasher.HashPassword(viewModel.Password);
                 }
+
+                existingUser.Role = viewModel.Role;
+
+                _context.Update(existingUser);
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(user);
+            return View(viewModel);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
