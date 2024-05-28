@@ -26,16 +26,16 @@ namespace CarFlex.Controllers
             ViewBag.YearSortParm = sortOrder == "Year" ? "year_desc" : "Year";
             ViewBag.PriceSortParm = sortOrder == "Price" ? "price_desc" : "Price";
 
-            var makes = _context.Car.Select(c => c.Make).Distinct().ToList();
-            var models = _context.Car.Select(c => c.Model).Distinct().ToList();
-            var years = _context.Car.Select(c => c.Year).Distinct().ToList();
+            var makes = _context.Cars.Select(c => c.Make).Distinct().ToList();
+            var models = _context.Cars.Select(c => c.Model).Distinct().ToList();
+            var years = _context.Cars.Select(c => c.Year).Distinct().ToList();
 
             ViewData["MakeFilter"] = new SelectList(makes);
             ViewData["ModelFilter"] = new SelectList(models);
             ViewData["YearFilter"] = new SelectList(years);
             ViewData["AvailabilityFilter"] = new SelectList(new[] { true, false });
 
-            var cars = from c in _context.Car.Include(c => c.Location)
+            var cars = from c in _context.Cars.Include(c => c.Location)
                 select c;
 
             if (!string.IsNullOrEmpty(makeFilter))
@@ -91,7 +91,7 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Car
+            var car = await _context.Cars
                 .FirstOrDefaultAsync(m => m.CarId == id);
             if (car == null)
             {
@@ -104,7 +104,7 @@ namespace CarFlex.Controllers
         // GET: Cars/Create
         public IActionResult Create()
         {
-            var locations = _context.Location.Select(l => new 
+            var locations = _context.Locations.Select(l => new 
             {
                 LocationId = l.LocationId,
                 Display = l.LocationId + " - " + l.Address + ", " + l.City
@@ -126,7 +126,7 @@ namespace CarFlex.Controllers
             
             if (ModelState.IsValid)
             {
-                _context.Car.Add(car);
+                _context.Cars.Add(car);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -137,7 +137,7 @@ namespace CarFlex.Controllers
                 Console.WriteLine(error.ErrorMessage);
             }
 
-            var locations = _context.Location.Select(l => new 
+            var locations = _context.Locations.Select(l => new 
             {
                 LocationId = l.LocationId,
                 Display = l.LocationId + " - " + l.Address + ", " + l.City
@@ -154,13 +154,13 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Car.FindAsync(id);
+            var car = await _context.Cars.FindAsync(id);
             if (car == null)
             {
                 return NotFound();
             }
 
-            var locations = _context.Location.Select(l => new 
+            var locations = _context.Locations.Select(l => new 
             {
                 LocationId = l.LocationId,
                 Display = l.LocationId + " - " + l.Address + ", " + l.City
@@ -206,7 +206,7 @@ namespace CarFlex.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var locations = _context.Location.Select(l => new 
+            var locations = _context.Locations.Select(l => new 
             {
                 LocationId = l.LocationId,
                 Display = l.LocationId + " - " + l.Address + ", " + l.City
@@ -224,7 +224,7 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Car
+            var car = await _context.Cars
                 .FirstOrDefaultAsync(m => m.CarId == id);
             if (car == null)
             {
@@ -239,10 +239,10 @@ namespace CarFlex.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var car = await _context.Car.FindAsync(id);
+            var car = await _context.Cars.FindAsync(id);
             if (car != null)
             {
-                _context.Car.Remove(car);
+                _context.Cars.Remove(car);
             }
 
             await _context.SaveChangesAsync();
@@ -251,7 +251,7 @@ namespace CarFlex.Controllers
 
         private bool CarExists(int id)
         {
-            return _context.Car.Any(e => e.CarId == id);
+            return _context.Cars.Any(e => e.CarId == id);
         }
 
         // GET: Cars/Rent/5
@@ -262,7 +262,7 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Car.FirstOrDefaultAsync(m => m.CarId == id);
+            var car = await _context.Cars.FirstOrDefaultAsync(m => m.CarId == id);
             if (car == null)
             {
                 return NotFound();

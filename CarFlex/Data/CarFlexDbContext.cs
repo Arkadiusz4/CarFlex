@@ -1,21 +1,20 @@
 using CarFlex.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class CarFlexDbContext : IdentityDbContext<IdentityUser>
+public class CarFlexDbContext : DbContext
 {
     public CarFlexDbContext(DbContextOptions<CarFlexDbContext> options)
         : base(options)
     {
     }
 
-    public DbSet<Car> Car { get; set; } = default!;
+    public DbSet<Car> Cars { get; set; } = default!;
 
-    public DbSet<Customer> Customer { get; set; } = default!;
+    public DbSet<Customer> Customers { get; set; } = default!;
 
-    public DbSet<Location> Location { get; set; } = default!;
+    public DbSet<Location> Locations { get; set; } = default!;
 
-    public DbSet<Rental> Rental { get; set; } = default!;
-    public DbSet<User> User { get; set; } = default!;
+    public DbSet<Rental> Rentals { get; set; } = default!;
+
+    public DbSet<User> Users { get; set; } = default!;
 }

@@ -23,7 +23,7 @@ namespace CarFlex.Controllers
             ViewBag.RentalCountSortParm = sortOrder == "RentalCount" ? "rentalCount_desc" : "RentalCount";
             ViewBag.TotalEarningsSortParm = sortOrder == "TotalEarnings" ? "totalEarnings_desc" : "TotalEarnings";
 
-            var carStats = await _context.Rental
+            var carStats = await _context.Rentals
                 .GroupBy(r => r.CarId)
                 .Select(g => new
                 {
@@ -34,7 +34,7 @@ namespace CarFlex.Controllers
                 .ToListAsync();
 
             var carStatsViewModel = carStats
-                .Join(_context.Car, r => r.CarId, c => c.CarId, (r, c) => new CarStatsViewModel
+                .Join(_context.Cars, r => r.CarId, c => c.CarId, (r, c) => new CarStatsViewModel
                 {
                     CarId = c.CarId,
                     Make = c.Make,

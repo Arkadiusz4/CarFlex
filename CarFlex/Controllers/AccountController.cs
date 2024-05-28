@@ -1,22 +1,21 @@
 using CarFlex.Models;
-using Microsoft.AspNetCore.Identity;
+using CarFlex.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarFlex
+namespace CarFlex.Controllers
 {
     public class AccountController : Controller
     {
         private readonly CarFlexDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUserService _userService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(CarFlexDbContext context, UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+        public AccountController(CarFlexDbContext context, IUserService userService, ILogger<AccountController> logger)
         {
             _context = context;
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -24,164 +23,113 @@ namespace CarFlex
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(string username, string password)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe,
-                    lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+            var user = await _userService.Authenticate(username, password);
 
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            if (user == null)
+            {
+                TempData["Message"] = "Invalid username or password";
+                return View();
             }
 
-            return View(model);
+            HttpContext.Session.SetString("Username", user.Username);
+            HttpContext.Session.SetString("Role", user.Role);
+
+            TempData["Message"] = "Login successful!";
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            HttpContext.Session.Remove("Username");
+            HttpContext.Session.Remove("Role");
+
+            TempData["Message"] = "Logged out successfully!";
+            return RedirectToAction("Login");
         }
 
-        // GET: Account
-        // GET: Account
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var identityUsers = await _userManager.Users.ToListAsync();
-            var users = identityUsers.Select(user => new User
-            {
-                UserId = user.Id, // Assuming UserId is string in your User model or you need to convert it.
-                Username = user.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
-            }).ToList();
-
+            var users = await _context.Users.ToListAsync();
             return View(users);
         }
 
-        // GET: Account/Details/5
-        public async Task<IActionResult> Details(string id)
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-
-            var identityUser = await _userManager.FindByIdAsync(id);
-            if (identityUser == null)
-            {
-                return NotFound();
-            }
-
-            var user = new User
-            {
-                UserId = identityUser.Id, // Assuming UserId is an integer
-                Username = identityUser.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
-            };
 
             return View(user);
         }
 
-        // GET: Account/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Account/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Password,IsAdmin")] User user)
+        public async Task<IActionResult> Create([Bind("Username,Password,Role")] User user)
         {
-            Console.WriteLine("Create method hit");
-
             if (ModelState.IsValid)
             {
-                var identityUser = new IdentityUser { UserName = user.Username };
-                var result = await _userManager.CreateAsync(identityUser, user.Password);
-                if (result.Succeeded)
+                try
                 {
-                    Console.WriteLine("User created successfully");
-
-                    if (user.IsAdmin)
-                    {
-                        await _userManager.AddToRoleAsync(identityUser, "Admin");
-                        Console.WriteLine("User added to Admin role");
-                    }
-
-                    await _userManager.AddToRoleAsync(identityUser, "User");
-                    Console.WriteLine("User added to User role");
-
-                    // Set the UserId from the identityUser
-                    user.UserId = identityUser.Id;
-
-                    // Add the user to your custom User table if needed
-                    // _context.Users.Add(user); // Assuming you have a DbSet<User> in your context
-                    // await _context.SaveChangesAsync();
-
+                    user.PasswordHash = PasswordHasher.HashPassword(user.Password);
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("User {Username} created successfully with role {Role}", user.Username,
+                        user.Role);
                     return RedirectToAction(nameof(Index));
                 }
-
-                foreach (var error in result.Errors)
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                    Console.WriteLine($"Error: {error.Description}");
+                    _logger.LogError(ex, "Error occurred while creating user {Username}", user.Username);
+                    ModelState.AddModelError("", "An error occurred while creating the user.");
                 }
             }
             else
             {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                _logger.LogWarning("Invalid model state for user {Username}", user.Username);
+                foreach (var error in ModelState)
                 {
-                    Console.WriteLine($"Validation error: {error.ErrorMessage}");
+                    foreach (var subError in error.Value.Errors)
+                    {
+                        _logger.LogWarning("Validation error for {Field}: {Error}", error.Key, subError.ErrorMessage);
+                    }
                 }
             }
 
-            Console.WriteLine("Model state is invalid");
             return View(user);
         }
 
 
-
-        // GET: Account/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-
-            var identityUser = await _userManager.FindByIdAsync(id);
-            if (identityUser == null)
-            {
-                return NotFound();
-            }
-
-            // Map IdentityUser to User
-            var user = new User
-            {
-                UserId = (identityUser.Id), // Assuming UserId is an integer
-                Username = identityUser.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
-            };
 
             return View(user);
         }
 
-        // POST: Account/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,IsAdmin")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Role")] User user)
         {
-            if (id != int.Parse(user.UserId))
+            if (id != user.Id)
             {
                 return NotFound();
             }
@@ -190,29 +138,26 @@ namespace CarFlex
             {
                 try
                 {
-                    var identityUser = await _userManager.FindByIdAsync(user.UserId.ToString());
-                    if (identityUser == null)
+                    var existingUser = await _context.Users.FindAsync(id);
+                    if (existingUser == null)
                     {
                         return NotFound();
                     }
 
-                    identityUser.UserName = user.Username;
-                    // Update other fields as needed
-
-                    var result = await _userManager.UpdateAsync(identityUser);
-                    if (result.Succeeded)
+                    existingUser.Username = user.Username;
+                    if (!string.IsNullOrEmpty(user.Password))
                     {
-                        return RedirectToAction(nameof(Index));
+                        existingUser.PasswordHash = PasswordHasher.HashPassword(user.Password);
                     }
 
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    existingUser.Role = user.Role;
+
+                    _context.Update(existingUser);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await UserExists(user.UserId))
+                    if (!await UserExists(user.Id))
                     {
                         return NotFound();
                     }
@@ -221,63 +166,38 @@ namespace CarFlex
                         throw;
                     }
                 }
+
+                return RedirectToAction(nameof(Index));
             }
 
             return View(user);
         }
 
-        // GET: Account/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-
-            var identityUser = await _userManager.FindByIdAsync(id);
-            if (identityUser == null)
-            {
-                return NotFound();
-            }
-
-            // Map IdentityUser to User
-            var user = new User
-            {
-                UserId = (identityUser.Id), // Assuming UserId is an integer
-                Username = identityUser.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
-            };
 
             return View(user);
         }
 
-        // POST: Account/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                var result = await _userManager.DeleteAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
+            var user = await _context.Users.FindAsync(id);
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> UserExists(string id)
+        private async Task<bool> UserExists(int id)
         {
-            return await _userManager.FindByIdAsync(id) != null;
+            return await _context.Users.AnyAsync(e => e.Id == id);
         }
     }
 }
