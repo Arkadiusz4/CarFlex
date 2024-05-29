@@ -112,24 +112,24 @@ namespace CarFlex.Data
             context.SaveChanges();
             Console.WriteLine("Cars seeded.");
 
-            var customers = new Customer[]
-            {
-                new Customer
-                {
-                    FirstName = "John", LastName = "Doe", Email = "john.doe@example.com", PhoneNumber = "123456789",
-                    Address = "123 Main St", DriversLicenseNumber = "D1234567"
-                },
-                new Customer
-                {
-                    FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com", PhoneNumber = "987654321",
-                    Address = "456 Elm St", DriversLicenseNumber = "D7654321"
-                }
-            };
-
-            foreach (var customer in customers)
-            {
-                context.Customers.Add(customer);
-            }
+            // var customers = new Customer[]
+            // {
+            //     new Customer
+            //     {
+            //         FirstName = "John", LastName = "Doe", Email = "john.doe@example.com", PhoneNumber = "123456789",
+            //         Address = "123 Main St", DriversLicenseNumber = "D1234567"
+            //     },
+            //     new Customer
+            //     {
+            //         FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com", PhoneNumber = "987654321",
+            //         Address = "456 Elm St", DriversLicenseNumber = "D7654321"
+            //     }
+            // };
+            //
+            // foreach (var customer in customers)
+            // {
+            //     context.Customers.Add(customer);
+            // }
 
             context.SaveChanges();
 
