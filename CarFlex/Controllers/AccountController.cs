@@ -1,6 +1,7 @@
 using CarFlex.Models;
 using CarFlex.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarFlex.Controllers
@@ -73,6 +74,7 @@ namespace CarFlex.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Roles = new SelectList(new List<string> { "User", "Admin" });
             return View();
         }
 
@@ -84,57 +86,37 @@ namespace CarFlex.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                var user = new User
                 {
-                    // Tworzenie nowego użytkownika
-                    var user = new User
-                    {
-                        Username = viewModel.Username,
-                        HashedPassword = PasswordHasher.HashPassword(viewModel.Password),
-                        Role = viewModel.Role
-                    };
+                    Username = viewModel.Username,
+                    HashedPassword = PasswordHasher.HashPassword(viewModel.Password),
+                    Role = viewModel.Role
+                };
 
-                    _context.Add(user);
-                    await _context.SaveChangesAsync();
+                _context.Add(user);
+                await _context.SaveChangesAsync();
 
-                    // Tworzenie nowego klienta
-                    var customer = new Customer
-                    {
-                        FirstName = viewModel.FirstName,
-                        LastName = viewModel.LastName,
-                        Email = viewModel.Email,
-                        PhoneNumber = viewModel.PhoneNumber,
-                        Address = viewModel.Address,
-                        DriversLicenseNumber = viewModel.DriversLicenseNumber
-                    };
-
-                    _context.Add(customer);
-                    await _context.SaveChangesAsync();
-
-                    _logger.LogInformation("User {Username} created successfully with role {Role} and Customer {Email}",
-                        user.Username, user.Role, customer.Email);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
+                var customer = new Customer
                 {
-                    _logger.LogError(ex, "Error occurred while creating user {Username}", viewModel.Username);
-                    ModelState.AddModelError("", "An error occurred while creating the user.");
-                }
-            }
-            else
-            {
-                _logger.LogWarning("Invalid model state for user {Username}", viewModel.Username);
-                foreach (var error in ModelState)
-                {
-                    foreach (var subError in error.Value.Errors)
-                    {
-                        _logger.LogWarning("Validation error for {Field}: {Error}", error.Key, subError.ErrorMessage);
-                    }
-                }
+                    FirstName = viewModel.FirstName,
+                    LastName = viewModel.LastName,
+                    Email = viewModel.Email,
+                    PhoneNumber = viewModel.PhoneNumber,
+                    Address = viewModel.Address,
+                    DriversLicenseNumber = viewModel.DriversLicenseNumber
+                };
+
+                _context.Add(customer);
+                await _context.SaveChangesAsync();
+
+
+                return RedirectToAction(nameof(Index));
             }
 
+            ViewBag.Roles = new SelectList(new List<string> { "User", "Admin" });
             return View(viewModel);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)

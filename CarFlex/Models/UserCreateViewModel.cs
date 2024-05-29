@@ -12,10 +12,10 @@ namespace CarFlex.Models
         [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string Role { get; set; }
 
-        // Fields for Customer
         [Required]
         [StringLength(50)]
         [Display(Name = "First Name")]
