@@ -1,22 +1,22 @@
 using CarFlex.Models;
-using Microsoft.AspNetCore.Identity;
+using CarFlex.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarFlex
+namespace CarFlex.Controllers
 {
     public class AccountController : Controller
     {
         private readonly CarFlexDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUserService _userService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(CarFlexDbContext context, UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+        public AccountController(CarFlexDbContext context, IUserService userService, ILogger<AccountController> logger)
         {
             _context = context;
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -24,260 +24,186 @@ namespace CarFlex
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(string username, string password)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe,
-                    lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+            var user = await _userService.Authenticate(username, password);
 
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            if (user == null)
+            {
+                TempData["Message"] = "Invalid username or password";
+                return View();
             }
 
-            return View(model);
-        }
+            HttpContext.Session.SetString("Username", user.Username);
+            HttpContext.Session.SetString("Role", user.Role);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
+            TempData["Message"] = "Login successful!";
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: Account
-        // GET: Account
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("Username");
+            HttpContext.Session.Remove("Role");
+
+            TempData["Message"] = "Logged out successfully!";
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var identityUsers = await _userManager.Users.ToListAsync();
-            var users = identityUsers.Select(user => new User
-            {
-                UserId = user.Id, // Assuming UserId is string in your User model or you need to convert it.
-                Username = user.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
-            }).ToList();
-
+            var users = await _context.Users.ToListAsync();
             return View(users);
         }
 
-        // GET: Account/Details/5
-        public async Task<IActionResult> Details(string id)
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-
-            var identityUser = await _userManager.FindByIdAsync(id);
-            if (identityUser == null)
-            {
-                return NotFound();
-            }
-
-            var user = new User
-            {
-                UserId = identityUser.Id, // Assuming UserId is an integer
-                Username = identityUser.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
-            };
 
             return View(user);
         }
 
-        // GET: Account/Create
+        [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Roles = new SelectList(new List<string> { "User", "Admin" });
             return View();
         }
 
-        // POST: Account/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Password,IsAdmin")] User user)
+        public async Task<IActionResult> Create(
+            [Bind("Username,Password,Role,FirstName,LastName,Email,PhoneNumber,Address,DriversLicenseNumber")]
+            UserCreateViewModel viewModel)
         {
-            Console.WriteLine("Create method hit");
-
             if (ModelState.IsValid)
             {
-                var identityUser = new IdentityUser { UserName = user.Username };
-                var result = await _userManager.CreateAsync(identityUser, user.Password);
-                if (result.Succeeded)
+                var user = new User
                 {
-                    Console.WriteLine("User created successfully");
+                    Username = viewModel.Username,
+                    HashedPassword = PasswordHasher.HashPassword(viewModel.Password),
+                    Role = viewModel.Role
+                };
 
-                    if (user.IsAdmin)
-                    {
-                        await _userManager.AddToRoleAsync(identityUser, "Admin");
-                        Console.WriteLine("User added to Admin role");
-                    }
+                _context.Add(user);
+                await _context.SaveChangesAsync();
 
-                    await _userManager.AddToRoleAsync(identityUser, "User");
-                    Console.WriteLine("User added to User role");
-
-                    // Set the UserId from the identityUser
-                    user.UserId = identityUser.Id;
-
-                    // Add the user to your custom User table if needed
-                    // _context.Users.Add(user); // Assuming you have a DbSet<User> in your context
-                    // await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(Index));
-                }
-
-                foreach (var error in result.Errors)
+                var customer = new Customer
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                    Console.WriteLine($"Error: {error.Description}");
-                }
-            }
-            else
-            {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine($"Validation error: {error.ErrorMessage}");
-                }
+                    FirstName = viewModel.FirstName,
+                    LastName = viewModel.LastName,
+                    Email = viewModel.Email,
+                    PhoneNumber = viewModel.PhoneNumber,
+                    Address = viewModel.Address,
+                    DriversLicenseNumber = viewModel.DriversLicenseNumber
+                };
+
+                _context.Add(customer);
+                await _context.SaveChangesAsync();
+
+
+                return RedirectToAction(nameof(Index));
             }
 
-            Console.WriteLine("Model state is invalid");
-            return View(user);
+            ViewBag.Roles = new SelectList(new List<string> { "User", "Admin" });
+            return View(viewModel);
         }
 
 
-
-        // GET: Account/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            var identityUser = await _userManager.FindByIdAsync(id);
-            if (identityUser == null)
+            var viewModel = new UserEditViewModel
             {
-                return NotFound();
-            }
-
-            // Map IdentityUser to User
-            var user = new User
-            {
-                UserId = (identityUser.Id), // Assuming UserId is an integer
-                Username = identityUser.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role
             };
 
-            return View(user);
+            return View(viewModel);
         }
 
-        // POST: Account/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Username,IsAdmin")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Role")] UserEditViewModel viewModel)
         {
-            if (id != int.Parse(user.UserId))
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                var existingUser = await _context.Users.FindAsync(id);
+                if (existingUser == null)
                 {
-                    var identityUser = await _userManager.FindByIdAsync(user.UserId.ToString());
-                    if (identityUser == null)
-                    {
-                        return NotFound();
-                    }
-
-                    identityUser.UserName = user.Username;
-                    // Update other fields as needed
-
-                    var result = await _userManager.UpdateAsync(identityUser);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                existingUser.Username = viewModel.Username;
+                if (!string.IsNullOrEmpty(viewModel.Password))
                 {
-                    if (!await UserExists(user.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    existingUser.HashedPassword =
+                        PasswordHasher.HashPassword(viewModel.Password);
                 }
+
+                existingUser.Role = viewModel.Role;
+
+                _context.Update(existingUser);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            return View(user);
+            return View(viewModel);
         }
 
-        // GET: Account/Delete/5
-        public async Task<IActionResult> Delete(string id)
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-
-            var identityUser = await _userManager.FindByIdAsync(id);
-            if (identityUser == null)
-            {
-                return NotFound();
-            }
-
-            // Map IdentityUser to User
-            var user = new User
-            {
-                UserId = (identityUser.Id), // Assuming UserId is an integer
-                Username = identityUser.UserName,
-                // Password should not be included for security reasons
-                IsAdmin = false // Or fetch this information if you have a way to store this
-            };
 
             return View(user);
         }
 
-        // POST: Account/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
-                var result = await _userManager.DeleteAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return NotFound();
             }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> UserExists(string id)
+        private async Task<bool> UserExists(int id)
         {
-            return await _userManager.FindByIdAsync(id) != null;
+            return await _context.Users.AnyAsync(e => e.Id == id);
         }
     }
 }

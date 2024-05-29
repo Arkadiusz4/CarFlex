@@ -1,24 +1,22 @@
 using CarFlex.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using CarFlex.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<CarFlexDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CarFlexDbContext") ??
                       throw new InvalidOperationException("Connection string 'CarFlexDbContext' not found.")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<CarFlexDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddControllersWithViews(options =>
+builder.Services.AddSession(options =>
 {
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
-
-builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -26,9 +24,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<CarFlexDbContext>();
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    await DbInitializer.Initialize(context, userManager, roleManager);
+    await DbInitializer.Initialize(context);
 }
 
 if (!app.Environment.IsDevelopment())
@@ -41,6 +37,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

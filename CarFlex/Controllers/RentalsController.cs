@@ -17,7 +17,7 @@ namespace CarFlex.Controllers
         // GET: Rentals
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Rental.ToListAsync());
+            return View(await _context.Rentals.ToListAsync());
         }
 
         // GET: Rentals/Details/5
@@ -28,7 +28,7 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var rental = await _context.Rental
+            var rental = await _context.Rentals
                 .FirstOrDefaultAsync(m => m.RentalId == id);
             if (rental == null)
             {
@@ -41,14 +41,14 @@ namespace CarFlex.Controllers
         // GET: Rentals/Create
         public IActionResult Create(int? carId)
         {
-            var cars = _context.Car.Select(c => new 
+            var cars = _context.Cars.Select(c => new 
             {
                 CarId = c.CarId,
                 Display = c.CarId + " - " + c.Make + " " + c.Model
             }).ToList();
             ViewData["CarId"] = new SelectList(cars, "CarId", "Display");
             
-            var customers = _context.Customer.Select(c => new 
+            var customers = _context.Customers.Select(c => new 
             {
                 CustomerId = c.CustomerId,
                 Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
@@ -67,7 +67,7 @@ namespace CarFlex.Controllers
         {
             if (ModelState.IsValid)
             {
-                var overlappingRentals = await _context.Rental
+                var overlappingRentals = await _context.Rentals
                     .Where(r => r.CarId == rental.CarId && r.ReturnDate > rental.RentalDate && r.RentalDate < rental.ReturnDate)
                     .ToListAsync();
 
@@ -77,18 +77,18 @@ namespace CarFlex.Controllers
                     return View(rental);
                 }
                 
-                var car = await _context.Car.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
+                var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
                 if (car == null)
                 {
                     ModelState.AddModelError("CarId", "Invalid Car ID.");
-                    var cars = _context.Car.Select(c => new 
+                    var cars = _context.Cars.Select(c => new 
                     {
                         CarId = c.CarId,
                         Display = c.CarId + " - " + c.Make + " " + c.Model
                     }).ToList();
                     ViewData["CarId"] = new SelectList(cars, "CarId", "Display", rental.CarId);
                     
-                    var customers = _context.Customer.Select(c => new 
+                    var customers = _context.Customers.Select(c => new 
                     {
                         CustomerId = c.CustomerId,
                         Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
@@ -101,18 +101,18 @@ namespace CarFlex.Controllers
                 var rentalDays = (rental.ReturnDate - rental.RentalDate).TotalDays;
                 rental.TotalCost = (decimal)rentalDays * car.RentalPricePerDay;
 
-                _context.Rental.Add(rental);
+                _context.Rentals.Add(rental);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            var carsList = _context.Car.Select(c => new 
+            var carsList = _context.Cars.Select(c => new 
             {
                 CarId = c.CarId,
                 Display = c.CarId + " - " + c.Make + " " + c.Model
             }).ToList();
             ViewData["CarId"] = new SelectList(carsList, "CarId", "Display", rental.CarId);
             
-            var customersList = _context.Customer.Select(c => new 
+            var customersList = _context.Customers.Select(c => new 
             {
                 CustomerId = c.CustomerId,
                 Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
@@ -130,19 +130,19 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var rental = await _context.Rental.FindAsync(id);
+            var rental = await _context.Rentals.FindAsync(id);
             if (rental == null)
             {
                 return NotFound();
             }
-            var cars = _context.Car.Select(c => new 
+            var cars = _context.Cars.Select(c => new 
             {
                 CarId = c.CarId,
                 Display = c.CarId + " - " + c.Make + " " + c.Model
             }).ToList();
             ViewData["CarId"] = new SelectList(cars, "CarId", "Display", rental.CarId);
             
-            var customers = _context.Customer.Select(c => new 
+            var customers = _context.Customers.Select(c => new 
             {
                 CustomerId = c.CustomerId,
                 Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
@@ -169,7 +169,7 @@ namespace CarFlex.Controllers
                 try
                 {
                     // Check for overlapping rental periods
-                    var overlappingRentals = await _context.Rental
+                    var overlappingRentals = await _context.Rentals
                         .Where(r => r.CarId == rental.CarId && r.RentalId != rental.RentalId && r.ReturnDate > rental.RentalDate && r.RentalDate < rental.ReturnDate)
                         .ToListAsync();
 
@@ -180,18 +180,18 @@ namespace CarFlex.Controllers
                     }
                     
                     // Calculate the total cost
-                    var car = await _context.Car.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
+                    var car = await _context.Cars.FirstOrDefaultAsync(c => c.CarId == rental.CarId);
                     if (car == null)
                     {
                         ModelState.AddModelError("CarId", "Invalid Car ID.");
-                        var cars = _context.Car.Select(c => new 
+                        var cars = _context.Cars.Select(c => new 
                         {
                             CarId = c.CarId,
                             Display = c.CarId + " - " + c.Make + " " + c.Model
                         }).ToList();
                         ViewData["CarId"] = new SelectList(cars, "CarId", "Display", rental.CarId);
                         
-                        var customers = _context.Customer.Select(c => new 
+                        var customers = _context.Customers.Select(c => new 
                         {
                             CustomerId = c.CustomerId,
                             Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
@@ -220,14 +220,14 @@ namespace CarFlex.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            var carsList = _context.Car.Select(c => new 
+            var carsList = _context.Cars.Select(c => new 
             {
                 CarId = c.CarId,
                 Display = c.CarId + " - " + c.Make + " " + c.Model
             }).ToList();
             ViewData["CarId"] = new SelectList(carsList, "CarId", "Display", rental.CarId);
             
-            var customersList = _context.Customer.Select(c => new 
+            var customersList = _context.Customers.Select(c => new 
             {
                 CustomerId = c.CustomerId,
                 Display = c.CustomerId + " - " + c.FirstName + " " + c.LastName
@@ -245,7 +245,7 @@ namespace CarFlex.Controllers
                 return NotFound();
             }
 
-            var rental = await _context.Rental
+            var rental = await _context.Rentals
                 .FirstOrDefaultAsync(m => m.RentalId == id);
             if (rental == null)
             {
@@ -260,10 +260,10 @@ namespace CarFlex.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var rental = await _context.Rental.FindAsync(id);
+            var rental = await _context.Rentals.FindAsync(id);
             if (rental != null)
             {
-                _context.Rental.Remove(rental);
+                _context.Rentals.Remove(rental);
             }
 
             await _context.SaveChangesAsync();
@@ -272,7 +272,7 @@ namespace CarFlex.Controllers
 
         private bool RentalExists(int id)
         {
-            return _context.Rental.Any(e => e.RentalId == id);
+            return _context.Rentals.Any(e => e.RentalId == id);
         }
     }
 }
