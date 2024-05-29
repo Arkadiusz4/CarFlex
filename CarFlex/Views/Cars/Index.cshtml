@@ -121,20 +121,13 @@
             <td>
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
-                    <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.CarId">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.CarId">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.CarId">Delete</a>
                 }
-                @if (Context.Session.GetString("Role") == "User")
+                @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                 {
-                    @if (item.Availability)
-                    {
-                        <a asp-action="Create" asp-controller="Rentals" asp-route-carId="@item.CarId" class="btn btn-primary">Rent</a>
-                    }
-                    else
-                    {
-                        <a class="btn btn-secondary disabled" disabled>Rent</a>
-                    }
+                    <a asp-action="Rent" asp-route-id="@item.CarId">Rent</a>
                 }
             </td>
         </tr>

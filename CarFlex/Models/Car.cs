@@ -32,6 +32,7 @@ public class Car
     [Display(Name = "Rental price per day")]
     public decimal RentalPricePerDay { get; set; }
     
+    [Required]
     [Display(Name = "Availability")]
     public bool Availability { get; set; }
 
