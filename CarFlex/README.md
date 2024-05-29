@@ -10,7 +10,9 @@ CarFlex is a car rental management application built with ASP.NET Core MVC. It a
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
-
+- [Authors](#authors)
+- [Databse diagram](#database-diagram)
+  
 ## Features
 
 - **User Authentication**: Secure login and registration with role-based access control.
@@ -79,8 +81,8 @@ dotnet run
 ## Usage
 
 ### User Roles
-   - Admin: Has access to manage users, cars, customers, locations, and rentals.
-   - User: Can browse cars and make rentals.
+   - **Admin**: Has access to manage users, cars, customers, locations, and rentals.
+   - **User**: Can browse cars and make rentals.
 
 ### Car Rental
    - Navigate to the "Cars" section to view available cars.
@@ -88,14 +90,13 @@ dotnet run
    - Fill in the rental details and submit.
    
 ### Manage Entities
-   - Cars: Add, edit, and delete cars from the "Cars" section.
-   - Customers: Manage customer information from the "Customers" section.
-   - Locations: Add and edit rental locations from the "Locations" section.
-   - Rentals: View and manage all rentals from the "Rentals" section.
+   - **Cars**: Add, edit, and delete cars from the "Cars" section.
+   - **Customers**: Manage customer information from the "Customers" section.
+   - **Locations**: Add and edit rental locations from the "Locations" section.
+   - **Rentals**: View and manage all rentals from the "Rentals" section.
 
 ### Statistics
    - Access "Car Stats" from the navigation menu to view car rental rankings and earnings.
-   Project Structure
 
 ## Project Structure
 ```bash
@@ -130,7 +131,6 @@ CarFlex/
 │
 ├── appsettings.json   # Configuration file
 ├── Program.cs         # Program entry point
-├── Startup.cs         # Application startup
 └── CarFlex.csproj     # Project file
 ```
 
@@ -138,10 +138,14 @@ CarFlex/
 Contributions are welcome! Please fork the repository and use a feature branch. Pull requests are warmly welcome.
 
 1. Fork the repository.
-2. Create your feature branch (git checkout -b feature/YourFeature).
-3. Commit your changes (git commit -am 'Add some feature').
-4. Push to the branch (git push origin feature/YourFeature).
+2. Create your feature branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -am 'Add some feature'`).
+4. Push to the branch (`git push origin feature/YourFeature`).
 5. Create a new Pull Request.
 
+## Authors
+  * [Arkadiusz Mika](https://github.com/Arkadiusz4)
+  * [Maciej Michałek](https://github.com/McMichalek)
 
+## Database diagram
 ![Database diagram](https://github.com/Arkadiusz4/CarFlex/assets/71427558/3b4be576-2862-4d0a-86b0-9fc5b45f084e)
