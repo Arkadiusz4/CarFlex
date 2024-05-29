@@ -78,13 +78,19 @@ namespace CarFlex.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Password,Role")] User user)
+        public async Task<IActionResult> Create([Bind("Username,Password,Role")] UserCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    user.HashedPassword = PasswordHasher.HashPassword(user.Password); // Haszowanie hasła
+                    var user = new User
+                    {
+                        Username = viewModel.Username,
+                        HashedPassword = PasswordHasher.HashPassword(viewModel.Password),
+                        Role = viewModel.Role
+                    };
+
                     _context.Add(user);
                     await _context.SaveChangesAsync();
                     _logger.LogInformation("User {Username} created successfully with role {Role}", user.Username,
@@ -93,13 +99,13 @@ namespace CarFlex.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred while creating user {Username}", user.Username);
+                    _logger.LogError(ex, "Error occurred while creating user {Username}", viewModel.Username);
                     ModelState.AddModelError("", "An error occurred while creating the user.");
                 }
             }
             else
             {
-                _logger.LogWarning("Invalid model state for user {Username}", user.Username);
+                _logger.LogWarning("Invalid model state for user {Username}", viewModel.Username);
                 foreach (var error in ModelState)
                 {
                     foreach (var subError in error.Value.Errors)
@@ -109,7 +115,7 @@ namespace CarFlex.Controllers
                 }
             }
 
-            return View(user);
+            return View(viewModel);
         }
 
         [HttpGet]

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarFlex.Migrations
 {
     [DbContext(typeof(CarFlexDbContext))]
-    [Migration("20240528212204_InitialCreate")]
+    [Migration("20240529085015_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

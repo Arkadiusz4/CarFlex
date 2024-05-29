@@ -1,9 +1,5 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using CarFlex.Models;
 using CarFlex.Utilities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CarFlex.Data
 {
@@ -147,17 +143,6 @@ namespace CarFlex.Data
             context.Users.Add(admin);
             context.SaveChanges();
             Console.WriteLine("Admin user seeded.");
-
-            var user = new User
-            {
-                Username = "user",
-                HashedPassword = PasswordHasher.HashPassword("user123"),
-                Role = "User"
-            };
-
-            context.Users.Add(user);
-            context.SaveChanges();
-            Console.WriteLine("User user seeded.");
         }
     }
 }
