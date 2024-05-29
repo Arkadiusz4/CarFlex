@@ -78,12 +78,15 @@ namespace CarFlex.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,Password,Role")] UserCreateViewModel viewModel)
+        public async Task<IActionResult> Create(
+            [Bind("Username,Password,Role,FirstName,LastName,Email,PhoneNumber,Address,DriversLicenseNumber")]
+            UserCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Tworzenie nowego użytkownika
                     var user = new User
                     {
                         Username = viewModel.Username,
@@ -93,8 +96,23 @@ namespace CarFlex.Controllers
 
                     _context.Add(user);
                     await _context.SaveChangesAsync();
-                    _logger.LogInformation("User {Username} created successfully with role {Role}", user.Username,
-                        user.Role);
+
+                    // Tworzenie nowego klienta
+                    var customer = new Customer
+                    {
+                        FirstName = viewModel.FirstName,
+                        LastName = viewModel.LastName,
+                        Email = viewModel.Email,
+                        PhoneNumber = viewModel.PhoneNumber,
+                        Address = viewModel.Address,
+                        DriversLicenseNumber = viewModel.DriversLicenseNumber
+                    };
+
+                    _context.Add(customer);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation("User {Username} created successfully with role {Role} and Customer {Email}",
+                        user.Username, user.Role, customer.Email);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
